@@ -34,6 +34,7 @@ Route::middleware(['auth:web'])->group(function () {
     Route::get('/surat-pengajuan', [SuratPengajuanController::class, 'index'])->name('surat-pengajuan');
     Route::get('/surat-pengajuan/create', [SuratPengajuanController::class, 'create'])->name('surat-pengajuan.create');
     Route::post('/surat-pengajuan/store', [SuratPengajuanController::class, 'store'])->name('surat-pengajuan.store');
+    Route::get('/get-resident-data/{id}', [SuratPengajuanController::class, 'getResidentData'])->name('get-resident-data');
     // Route::get('/get-nomor-surat/{id}', [SuratPengajuanController::class, 'getNomorSurat'])->name('get-nomor');
     Route::get('/surat-pengajuan/{id}/detail', [SuratPengajuanController::class, 'detail'])->name('surat-pengajuan.detail');
     Route::post('/surat-pengajuan/status/{id}', [SuratPengajuanController::class, 'updateStatus'])->name('surat-pengajuan.update_status');

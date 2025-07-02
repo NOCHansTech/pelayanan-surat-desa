@@ -25,11 +25,11 @@
                         </div>
                     @endif
 
-
                     <form class="form form-vertical" action="{{ route('surat-pengajuan.store') }}" method="POST">
                         @csrf
                         <div class="form-body">
                             <div class="row">
+                                {{-- Kolom Kiri --}}
                                 <div class="col-md-6 mb-4">
                                     <div class="form-group has-icon-left">
                                         <label for="id_jenis_surat">Pilih Jenis Surat</label>
@@ -37,9 +37,7 @@
                                             <select class="form-control" name="id_jenis_surat" id="id_jenis_surat" required>
                                                 <option disabled selected>-- Pilih Jenis Surat --</option>
                                                 @foreach ($jenisSurat as $surat)
-                                                    <option value="{{ $surat->id }}">{{ $surat->nama }}
-                                                        ({{ $surat->kode }})
-                                                    </option>
+                                                    <option value="{{ $surat->id }}">{{ $surat->nama }} ({{ $surat->kode }})</option>
                                                 @endforeach
                                             </select>
                                             <div class="form-control-icon">
@@ -48,30 +46,32 @@
                                         </div>
                                     </div>
                                 </div>
-                                @if (!Auth::check() || Auth::user()->role == 'admin')
+
+                                {{-- Kolom Kanan --}}
                                 <div class="col-md-6 mb-4">
-                                    {{-- <div class="form-group has-icon-left">
-                                        <label for="nomor_surat">Nomor Surat</label>
+                                    <div class="form-group has-icon-left">
+                                        <label for="resident">Pilih Resident</label>
                                         <div class="position-relative">
-                                            <input 
-                                                type="text" 
-                                                name="nomor_surat" 
-                                                id="nomor_surat" 
-                                                class="form-control"
-                                                value="{{ $nomorSurat ?? '' }}"
-                                            >
+                                            <select class="form-control" name="resident_id" id="resident" required>
+                                                <option disabled selected>-- Pilih Resident --</option>
+                                                @foreach ($residents as $resident)
+                                                    <option value="{{ $resident->id }}" 
+                                                            {{ isset($resident->id) && $resident->id == $resident->id ? 'selected' : '' }}>
+                                                        {{ $resident->nama_lengkap }} ({{ $resident->nik }})
+                                                    </option>
+                                                @endforeach
+                                            </select>
                                             <div class="form-control-icon">
-                                                <i class="bi bi-hash"></i>
+                                                <i class="bi bi-person"></i>
                                             </div>
                                         </div>
-                                    </div> --}}
+                                    </div>
                                 </div>
-                                @else
-                                <div class="col-md-6 mb-4">
-                                </div>
-                                @endif
+                            </div>
+
+                            <div class="row">
                                 {{-- Kolom Kiri --}}
-                                <div class="col-md-6">
+                                <div class="col-md-6 mb-4">
                                     <div class="form-group has-icon-left">
                                         <label for="nik">NIK</label>
                                         <div class="position-relative">
@@ -145,6 +145,7 @@
                                             </div>
                                         </div>
                                     </div>
+
                                     <div class="form-group has-icon-left">
                                         <label for="tanggal_lahir">Tanggal Pengajuan</label>
                                         <div class="position-relative">
@@ -226,6 +227,7 @@
                                             </div>
                                         </div>
                                     </div>
+
                                     <div class="form-group">
                                         <label>Catatan</label>
                                         <div id="catatan-wrapper">
@@ -240,56 +242,64 @@
                                         <button type="button" class="btn btn-sm btn-secondary mt-2" id="add-catatan">
                                             <i class="bi bi-plus"></i> Tambah Catatan
                                         </button>
-
-                                        {{-- Error tampil --}}
-                                        @error('catatan_multi')
-                                            <small class="text-danger d-block">{{ $message }}</small>
-                                        @enderror
-                                        @error('catatan_multi.*')
-                                            <small class="text-danger d-block">{{ $message }}</small>
-                                        @enderror
                                     </div>
-
-
-
-
                                 </div>
+                            </div>
 
-
-
-                                {{-- Tombol --}}
-                                <div class="col-12 d-flex justify-content-end mt-4">
-                                    <button type="submit" class="btn btn-primary me-1 mb-1">Ajukan Surat</button>
-                                    <button type="reset" class="btn btn-light-secondary me-1 mb-1">Reset</button>
-                                </div>
+                            {{-- Tombol --}}
+                            <div class="col-12 d-flex justify-content-end mt-4">
+                                <button type="submit" class="btn btn-primary me-1 mb-1">Ajukan Surat</button>
+                                <button type="reset" class="btn btn-light-secondary me-1 mb-1">Reset</button>
                             </div>
                         </div>
                     </form>
 
                 </div>
-
             </div>
         </div>
     </div>
 @endsection
+
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        const jenisSurat = document.getElementById('id_jenis_surat');
-        const nomorSurat = document.getElementById('nomor_surat');
+        // Inisialisasi variabel untuk form dan resident dropdown
+        const residentSelect = document.getElementById('resident');
+        
+        // Ketika pilih resident berubah, ambil data terkait
+        residentSelect.addEventListener('change', function() {
+            const residentId = residentSelect.value;
 
-        jenisSurat.addEventListener('change', function() {
-            const id = this.value;
-            if (id) {
-                fetch(`/get-nomor-surat/${id}`)
-                    .then(res => res.json())
+            // Lakukan pengecekan apakah ada pilihan resident
+            if (residentId) {
+                // Request AJAX untuk mengambil data resident
+                fetch(`/get-resident-data/${residentId}`)
+                    .then(response => response.json())
                     .then(data => {
-                        nomorSurat.value = data.nomor;
+                        // Mengisi form dengan data yang diterima
+                        document.getElementById('nik').value = data.nik || '';
+                        document.getElementById('nama_lengkap').value = data.nama_lengkap || '';
+                        document.getElementById('tempat_lahir').value = data.tempat_lahir || '';
+                        document.getElementById('tanggal_lahir').value = data.tanggal_lahir || '';
+                        document.getElementById('jenis_kelamin').value = data.jenis_kelamin || '';
+                        document.getElementById('alamat').value = data.alamat || '';
+                        document.getElementById('agama').value = data.agama || '';
+                        document.getElementById('status_perkawinan').value = data.status_perkawinan || '';
+                        document.getElementById('pekerjaan').value = data.pekerjaan || '';
+                        document.getElementById('kewarganegaraan').value = data.kewarganegaraan || '';
+                        document.getElementById('nama_ayah').value = data.nama_ayah || '';
+                        document.getElementById('nama_ibu').value = data.nama_ibu || '';
                     })
-                    .catch(err => console.error('Gagal mengambil nomor surat:', err));
+                    .catch(error => console.error('Error fetching data:', error));
             }
         });
-    });
 
+        // Set default value for tanggal pengajuan
+        const today = new Date().toISOString().split('T')[0];
+        document.getElementById('tanggal_pengajuan').value = today;
+    });
+</script>
+
+<script>
     document.addEventListener('DOMContentLoaded', function() {
         const wrapper = document.getElementById('catatan-wrapper');
         const addBtn = document.getElementById('add-catatan');
@@ -310,11 +320,5 @@
                 group.remove();
             }
         });
-    });
-</script>
-<script>
-    document.addEventListener("DOMContentLoaded", function() {
-        const today = new Date().toISOString().split('T')[0];
-        document.getElementById('tanggal_pengajuan').value = today;
     });
 </script>

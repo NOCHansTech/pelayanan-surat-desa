@@ -95,27 +95,29 @@ class SuratPengajuanController extends Controller
     public function create()
     {
         $userId = Auth::user()->id_users;
-        $resident = \App\Models\Resident::where('users_id', $userId)->first();
+        $userRole = Auth::user()->role; // Misalnya role disimpan dalam tabel users
+
+        // Jika admin, bisa memilih semua resident
+        if ($userRole == 'admin') {
+            $residents = \App\Models\Resident::all();
+        } else {
+            // Jika bukan admin, hanya ambil resident terkait user
+            $residents = \App\Models\Resident::where('users_id', $userId)->get();
+        }
+
         $jenisSurat = \App\Models\JenisSurat::all();
 
-        $bulan = Carbon::now()->format('m'); // bulan sekarang
-        $tahun = Carbon::now()->format('Y'); // tahun sekarang
-        // $jenis = request('id_jenis_surat'); // optional, bisa dipakai jika mau dinamis via JS
-
-        // Default ambil jenis pertama
-        // $selectedJenisId = $jenisSurat->first()->id ?? null;
-
-        // $jumlah = \App\Models\SuratPengajuan::where('id_jenis_surat', $selectedJenisId)
-        //     ->whereMonth('tanggal_pengajuan', $bulan)
-        //     ->whereYear('tanggal_pengajuan', $tahun)
-        //     ->count();
-        // $jumlah = SuratPengajuan::whereYear('created_at', now()->year)->where('status', 'selesai')->count();
-
-        // $nomorSurat = str_pad($jumlah + 1, 3, '0', STR_PAD_LEFT);
-
-        // return view('surat-pengajuan.create', compact('resident', 'jenisSurat', 'nomorSurat', 'selectedJenisId'));
-        return view('surat-pengajuan.create', compact('resident', 'jenisSurat'));
+        return view('surat-pengajuan.create', compact('residents', 'jenisSurat'));
     }
+
+    public function getResidentData($id)
+    {
+        // Mengambil data resident berdasarkan ID
+        $resident = Resident::findOrFail($id);
+
+        return response()->json($resident);
+    }
+
 
     // public function store(Request $request)
     // {
