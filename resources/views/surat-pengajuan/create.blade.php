@@ -234,6 +234,14 @@
                                         <button type="button" class="btn btn-sm btn-secondary mt-2" id="add-catatan">
                                             <i class="bi bi-plus"></i> Tambah Catatan
                                         </button>
+
+                                        {{-- Error tampil --}}
+                                        @error('catatan_multi')
+                                            <small class="text-danger d-block">{{ $message }}</small>
+                                        @enderror
+                                        @error('catatan_multi.*')
+                                            <small class="text-danger d-block">{{ $message }}</small>
+                                        @enderror
                                     </div>
                                 </div>
                             </div>
@@ -289,11 +297,8 @@ document.addEventListener('DOMContentLoaded', function() {
     // Set tanggal hari ini untuk tanggal pengajuan
     document.getElementById('tanggal_pengajuan').value = new Date().toISOString().split('T')[0];
 });
-</script>
 
-
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function() {
         const wrapper = document.getElementById('catatan-wrapper');
         const addBtn = document.getElementById('add-catatan');
 
@@ -313,5 +318,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 group.remove();
             }
         });
-    });
+});
 </script>
+
+

@@ -15,23 +15,6 @@ use Barryvdh\DomPDF\Facade\Pdf;
 
 class SuratPengajuanController extends Controller
 {
-    // public function getNomorSurat($id)
-    // {
-    //     $surat = JenisSurat::findOrFail($id);
-    //     // $last = SuratPengajuan::where('id_jenis_surat', $id)
-    //     //     ->whereMonth('created_at', now()->month)
-    //     //     ->whereYear('created_at', now()->year)
-    //     //     ->count();
-    //     // Hitung jumlah surat untuk tahun sekarang (reset setiap tahun)
-    //     $last = SuratPengajuan::whereYear('created_at', now()->year)->count();
-
-    //     $nomor = str_pad($last + 1, 3, '0', STR_PAD_LEFT);
-    //     return response()->json([
-    //         'nomor' => $nomor,
-    //     ]);
-    // }
-
-
     public function index(Request $request)
     {
         $query = SuratPengajuan::with('jenisSurat');
@@ -128,78 +111,6 @@ class SuratPengajuanController extends Controller
 
         return response()->json($resident);
     }
-
-
-    // public function store(Request $request)
-    // {
-    //     $request->validate([
-    //         'id_jenis_surat' => 'required|exists:jenis_surat,id',
-    //         'nomor_surat' => 'required|string',
-    //         'nik' => 'required|string|max:16',
-    //         'nama_lengkap' => 'required|string',
-    //         'tempat_lahir' => 'nullable|string',
-    //         'tanggal_lahir' => 'nullable|date',
-    //         'jenis_kelamin' => 'required|in:L,P',
-    //         'alamat' => 'nullable|string',
-    //         'agama' => 'nullable|string',
-    //         'status_perkawinan' => 'nullable|string',
-    //         'pekerjaan' => 'nullable|string',
-    //         'kewarganegaraan' => 'nullable|string',
-    //         'nama_ayah' => 'nullable|string',
-    //         'nama_ibu' => 'nullable|string',
-    //         'tanggal_pengajuan' => 'required|date',
-    //         'catatan' => 'nullable|string',
-    //     ]);
-
-    //     DB::beginTransaction();
-    //     try {
-    //         $userId = Auth::user()->id_users;
-
-    //         // Update or create resident
-    //         $resident = Resident::updateOrCreate(
-    //             ['users_id' => $userId],
-    //             [
-    //                 'nik' => $request->nik,
-    //                 'nama_lengkap' => $request->nama_lengkap,
-    //                 'tempat_lahir' => $request->tempat_lahir,
-    //                 'tanggal_lahir' => $request->tanggal_lahir,
-    //                 'jenis_kelamin' => $request->jenis_kelamin,
-    //                 'alamat' => $request->alamat,
-    //                 'agama' => $request->agama,
-    //                 'status_perkawinan' => $request->status_perkawinan,
-    //                 'pekerjaan' => $request->pekerjaan,
-    //                 'kewarganegaraan' => $request->kewarganegaraan,
-    //                 'nama_ayah' => $request->nama_ayah,
-    //                 'nama_ibu' => $request->nama_ibu,
-    //             ]
-    //         );
-
-    //         // Create surat pengajuan
-    //         SuratPengajuan::create([
-    //             'id_residents' => $resident->id,
-    //             'id_jenis_surat' => $request->id_jenis_surat,
-    //             'nomor_surat' => $request->nomor_surat,
-    //             'tanggal_pengajuan' => $request->tanggal_pengajuan,
-    //             'catatan' => collect($request->catatan_multi)
-    //                 ->filter() // hilangkan yang kosong
-    //                 ->values() // reset index
-    //                 ->map(function ($item, $i) {
-    //                     return ($i + 1) . '. ' . trim($item);
-    //                 })
-    //                 ->implode("\n"),
-
-
-    //             'status' => 'diajukan',
-    //         ]);
-
-    //         DB::commit();
-
-    //         return redirect()->route('surat-pengajuan')->with('success', 'Pengajuan surat berhasil disimpan.');
-    //     } catch (\Exception $e) {
-    //         DB::rollBack();
-    //         return back()->with('error', 'Terjadi kesalahan saat menyimpan data.')->withInput();
-    //     }
-    // }
 
     public function store(Request $request)
     {
