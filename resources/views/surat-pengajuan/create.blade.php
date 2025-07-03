@@ -31,6 +31,7 @@
                             <div class="row">
                                 {{-- Kolom Kiri --}}
                                 <div class="col-md-6 mb-4">
+                                    <input type="button" value="{{Auth::user()->id_users}}">
                                     <div class="form-group has-icon-left">
                                         <label for="id_jenis_surat">Pilih Jenis Surat</label>
                                         <div class="position-relative">
@@ -52,14 +53,11 @@
                                     <div class="form-group has-icon-left">
                                         <label for="resident">Pilih Resident</label>
                                         <div class="position-relative">
-                                            <select class="form-control" name="resident_id" id="resident" required>
-                                                <option disabled selected>-- Pilih Resident --</option>
-                                                @foreach ($residents as $resident)
-                                                    <option value="{{ $resident->id }}" 
-                                                            {{ isset($resident->id) && $resident->id == $resident->id ? 'selected' : '' }}>
-                                                        {{ $resident->nama_lengkap }} ({{ $resident->nik }})
-                                                    </option>
-                                                @endforeach
+                                            <select class="form-control" name="resident_id" id="resident">
+                                                        <option value="">-- Pilih Warga Jika Sudah Terdaftar --</option>
+                                                        @foreach ($residents as $resident)
+                                                        <option value="{{ $resident->id }}">{{ $resident->nama_lengkap }} ({{ $resident->nik }})</option>
+                                                        @endforeach
                                             </select>
                                             <div class="form-control-icon">
                                                 <i class="bi bi-person"></i>
@@ -76,7 +74,7 @@
                                         <label for="nik">NIK</label>
                                         <div class="position-relative">
                                             <input type="text" name="nik" id="nik" class="form-control"
-                                                placeholder="NIK" value="{{ $resident->nik ?? '' }}">
+                                                placeholder="NIK" value="{{ old('nik') ?? '' }}">
                                             <div class="form-control-icon">
                                                 <i class="bi bi-credit-card"></i>
                                             </div>
@@ -87,7 +85,7 @@
                                         <label for="nama_lengkap">Nama Lengkap</label>
                                         <div class="position-relative">
                                             <input type="text" name="nama_lengkap" id="nama_lengkap" class="form-control"
-                                                placeholder="Nama Lengkap" value="{{ $resident->nama_lengkap ?? '' }}">
+                                                placeholder="Nama Lengkap" value="{{ old('nama_lengkap') ?? '' }}">
                                             <div class="form-control-icon">
                                                 <i class="bi bi-person"></i>
                                             </div>
@@ -98,7 +96,7 @@
                                         <label for="tempat_lahir">Tempat Lahir</label>
                                         <div class="position-relative">
                                             <input type="text" name="tempat_lahir" id="tempat_lahir" class="form-control"
-                                                placeholder="Tempat Lahir" value="{{ $resident->tempat_lahir ?? '' }}">
+                                                placeholder="Tempat Lahir" value="{{ old('tempat_lahir') ?? '' }}">
                                             <div class="form-control-icon">
                                                 <i class="bi bi-geo-alt"></i>
                                             </div>
@@ -109,7 +107,7 @@
                                         <label for="tanggal_lahir">Tanggal Lahir</label>
                                         <div class="position-relative">
                                             <input type="date" name="tanggal_lahir" id="tanggal_lahir"
-                                                class="form-control" value="{{ $resident->tanggal_lahir ?? '' }}">
+                                                class="form-control" value="{{ old('tanggal_lahir') ?? '' }}">
                                             <div class="form-control-icon">
                                                 <i class="bi bi-calendar"></i>
                                             </div>
@@ -119,15 +117,10 @@
                                     <div class="form-group has-icon-left">
                                         <label for="jenis_kelamin">Jenis Kelamin</label>
                                         <div class="position-relative">
-                                            <select class="form-control" id="jenis_kelamin" name="jenis_kelamin">
-                                                <option disabled {{ !$resident ? 'selected' : '' }}>Pilih Jenis Kelamin
-                                                </option>
-                                                <option value="L"
-                                                    {{ $resident && $resident->jenis_kelamin == 'L' ? 'selected' : '' }}>
-                                                    Laki-laki</option>
-                                                <option value="P"
-                                                    {{ $resident && $resident->jenis_kelamin == 'P' ? 'selected' : '' }}>
-                                                    Perempuan</option>
+                                            <select class="form-control" id="jenis_kelamin" name="jenis_kelamin" required>
+                                                <option disabled {{ old('jenis_kelamin') == null ? 'selected' : '' }}>Pilih Jenis Kelamin</option>
+                                                <option value="L" {{ old('jenis_kelamin') == 'L' ? 'selected' : '' }}>Laki-laki</option>
+                                                <option value="P" {{ old('jenis_kelamin') == 'P' ? 'selected' : '' }}>Perempuan</option>
                                             </select>
                                             <div class="form-control-icon">
                                                 <i class="bi bi-gender-ambiguous"></i>
@@ -139,7 +132,7 @@
                                         <label for="alamat">Alamat</label>
                                         <div class="position-relative">
                                             <input type="text" name="alamat" id="alamat" class="form-control"
-                                                placeholder="Alamat" value="{{ $resident->alamat ?? '' }}">
+                                                placeholder="Alamat" value="{{ old('alamat') ?? '' }}">
                                             <div class="form-control-icon">
                                                 <i class="bi bi-house"></i>
                                             </div>
@@ -164,7 +157,7 @@
                                         <label for="agama">Agama</label>
                                         <div class="position-relative">
                                             <input type="text" name="agama" id="agama" class="form-control"
-                                                placeholder="Agama" value="{{ $resident->agama ?? '' }}">
+                                                placeholder="Agama" value="{{ old('agama') ?? '' }}">
                                             <div class="form-control-icon">
                                                 <i class="bi bi-book"></i>
                                             </div>
@@ -176,7 +169,7 @@
                                         <div class="position-relative">
                                             <input type="text" name="status_perkawinan" id="status_perkawinan"
                                                 class="form-control" placeholder="Status Perkawinan"
-                                                value="{{ $resident->status_perkawinan ?? '' }}">
+                                                value="{{ old('status_perkawinan') ?? '' }}">
                                             <div class="form-control-icon">
                                                 <i class="bi bi-heart"></i>
                                             </div>
@@ -187,7 +180,7 @@
                                         <label for="pekerjaan">Pekerjaan</label>
                                         <div class="position-relative">
                                             <input type="text" name="pekerjaan" id="pekerjaan" class="form-control"
-                                                placeholder="Pekerjaan" value="{{ $resident->pekerjaan ?? '' }}">
+                                                placeholder="Pekerjaan" value="{{ old('pekerjaan') ?? '' }}">
                                             <div class="form-control-icon">
                                                 <i class="bi bi-briefcase"></i>
                                             </div>
@@ -199,7 +192,7 @@
                                         <div class="position-relative">
                                             <input type="text" name="kewarganegaraan" id="kewarganegaraan"
                                                 class="form-control" placeholder="Kewarganegaraan"
-                                                value="{{ $resident->kewarganegaraan ?? '' }}">
+                                                value="{{ old('kewarganegaraan') ?? '' }}">
                                             <div class="form-control-icon">
                                                 <i class="bi bi-flag"></i>
                                             </div>
@@ -210,7 +203,7 @@
                                         <label for="nama_ayah">Nama Ayah</label>
                                         <div class="position-relative">
                                             <input type="text" name="nama_ayah" id="nama_ayah" class="form-control"
-                                                placeholder="Nama Ayah" value="{{ $resident->nama_ayah ?? '' }}">
+                                                placeholder="Nama Ayah" value="{{ old('nama_ayah') ?? '' }}">
                                             <div class="form-control-icon">
                                                 <i class="bi bi-person-badge"></i>
                                             </div>
@@ -221,7 +214,7 @@
                                         <label for="nama_ibu">Nama Ibu</label>
                                         <div class="position-relative">
                                             <input type="text" name="nama_ibu" id="nama_ibu" class="form-control"
-                                                placeholder="Nama Ibu" value="{{ $resident->nama_ibu ?? '' }}">
+                                                placeholder="Nama Ibu" value="{{ old('nama_ibu') ?? '' }}">
                                             <div class="form-control-icon">
                                                 <i class="bi bi-person-badge-fill"></i>
                                             </div>
@@ -261,43 +254,44 @@
 @endsection
 
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // Inisialisasi variabel untuk form dan resident dropdown
-        const residentSelect = document.getElementById('resident');
-        
-        // Ketika pilih resident berubah, ambil data terkait
-        residentSelect.addEventListener('change', function() {
-            const residentId = residentSelect.value;
+document.addEventListener('DOMContentLoaded', function() {
+    const residentSelect = document.getElementById('resident');
 
-            // Lakukan pengecekan apakah ada pilihan resident
-            if (residentId) {
-                // Request AJAX untuk mengambil data resident
-                fetch(`/get-resident-data/${residentId}`)
-                    .then(response => response.json())
-                    .then(data => {
-                        // Mengisi form dengan data yang diterima
-                        document.getElementById('nik').value = data.nik || '';
-                        document.getElementById('nama_lengkap').value = data.nama_lengkap || '';
-                        document.getElementById('tempat_lahir').value = data.tempat_lahir || '';
-                        document.getElementById('tanggal_lahir').value = data.tanggal_lahir || '';
-                        document.getElementById('jenis_kelamin').value = data.jenis_kelamin || '';
-                        document.getElementById('alamat').value = data.alamat || '';
-                        document.getElementById('agama').value = data.agama || '';
-                        document.getElementById('status_perkawinan').value = data.status_perkawinan || '';
-                        document.getElementById('pekerjaan').value = data.pekerjaan || '';
-                        document.getElementById('kewarganegaraan').value = data.kewarganegaraan || '';
-                        document.getElementById('nama_ayah').value = data.nama_ayah || '';
-                        document.getElementById('nama_ibu').value = data.nama_ibu || '';
-                    })
-                    .catch(error => console.error('Error fetching data:', error));
-            }
-        });
+    residentSelect.addEventListener('change', function() {
+        const residentId = this.value;
 
-        // Set default value for tanggal pengajuan
-        const today = new Date().toISOString().split('T')[0];
-        document.getElementById('tanggal_pengajuan').value = today;
+        if (!residentId) {
+            // Reset semua field jika pilihan dikosongkan
+            document.querySelectorAll(
+                '#nik, #nama_lengkap, #tempat_lahir, #tanggal_lahir, #jenis_kelamin, #alamat, #agama, #status_perkawinan, #pekerjaan, #kewarganegaraan, #nama_ayah, #nama_ibu'
+            ).forEach(input => input.value = '');
+            return;
+        }
+
+        fetch(`/get-resident-data/${residentId}`)
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('nik').value = data.nik || '';
+                document.getElementById('nama_lengkap').value = data.nama_lengkap || '';
+                document.getElementById('tempat_lahir').value = data.tempat_lahir || '';
+                document.getElementById('tanggal_lahir').value = data.tanggal_lahir || '';
+                document.getElementById('jenis_kelamin').value = data.jenis_kelamin || '';
+                document.getElementById('alamat').value = data.alamat || '';
+                document.getElementById('agama').value = data.agama || '';
+                document.getElementById('status_perkawinan').value = data.status_perkawinan || '';
+                document.getElementById('pekerjaan').value = data.pekerjaan || '';
+                document.getElementById('kewarganegaraan').value = data.kewarganegaraan || '';
+                document.getElementById('nama_ayah').value = data.nama_ayah || '';
+                document.getElementById('nama_ibu').value = data.nama_ibu || '';
+            })
+            .catch(error => console.error('Error fetching resident data:', error));
     });
+
+    // Set tanggal hari ini untuk tanggal pengajuan
+    document.getElementById('tanggal_pengajuan').value = new Date().toISOString().split('T')[0];
+});
 </script>
+
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {

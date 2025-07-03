@@ -35,14 +35,19 @@ class SuratPengajuanController extends Controller
     public function index(Request $request)
     {
         $query = SuratPengajuan::with('jenisSurat');
-        $jumlah = SuratPengajuan::whereYear('created_at', now()->year)->where('status', 'selesai')->count();
+
+        $jumlah = SuratPengajuan::whereYear('created_at', now()->year)
+            ->where('status', 'selesai')
+            ->count();
+
         $nomorSurat = str_pad($jumlah + 1, 3, '0', STR_PAD_LEFT);
 
         // Jika user login adalah warga, filter berdasarkan id_residents
         if (Auth::user()->role === 'warga') {
-            $resident = Resident::where('users_id', Auth::user()->id_users)->first();
-            if ($resident) {
-                $query->where('id_residents', $resident->id);
+            $residentIds = Resident::where('users_id', Auth::user()->id_users)->pluck('id');
+
+            if ($residentIds->isNotEmpty()) {
+                $query->whereIn('id_residents', $residentIds);
             } else {
                 // Jika data resident tidak ditemukan, kembalikan halaman dengan data kosong
                 return view('surat-pengajuan.index', [
@@ -50,7 +55,7 @@ class SuratPengajuanController extends Controller
                     'filter_status' => $request->status,
                     'filter_bulan' => $request->bulan,
                     'filter_tahun' => $request->tahun,
-                    'nomorSurat' => $nomorSurat,  // Pass nomorSurat ke view
+                    'nomorSurat' => $nomorSurat,
                 ]);
             }
         }
@@ -58,17 +63,13 @@ class SuratPengajuanController extends Controller
         // Filter pencarian umum
         if ($request->search) {
             $query->where(function ($q) use ($request) {
-                // Pencarian berdasarkan nama pada jenis_surat
                 $q->whereHas('jenisSurat', function ($q2) use ($request) {
                     $q2->where('nama', 'like', '%' . $request->search . '%');
                 })
-                    // Pencarian berdasarkan nama pada resident (kolom nama_lengkap)
                     ->orWhereHas('resident', function ($q2) use ($request) {
                         $q2->where('nama_lengkap', 'like', '%' . $request->search . '%');
                     })
-                    // Pencarian berdasarkan nomor surat
                     ->orWhere('nomor_surat', 'like', '%' . $request->search . '%')
-                    // Pencarian berdasarkan status
                     ->orWhere('status', 'like', '%' . $request->search . '%');
             });
         }
@@ -78,6 +79,15 @@ class SuratPengajuanController extends Controller
             $query->where('status', $request->status);
         }
 
+        // Filter berdasarkan bulan dan tahun jika tersedia
+        if ($request->bulan) {
+            $query->whereMonth('created_at', $request->bulan);
+        }
+
+        if ($request->tahun) {
+            $query->whereYear('created_at', $request->tahun);
+        }
+
         $data = $query->orderByDesc('created_at')->paginate(10);
 
         return view('surat-pengajuan.index', [
@@ -85,7 +95,7 @@ class SuratPengajuanController extends Controller
             'filter_status' => $request->status,
             'filter_bulan' => $request->bulan,
             'filter_tahun' => $request->tahun,
-            'nomorSurat' => $nomorSurat,  // Pass nomorSurat ke view
+            'nomorSurat' => $nomorSurat,
         ]);
     }
 
@@ -189,6 +199,7 @@ class SuratPengajuanController extends Controller
     //         return back()->with('error', 'Terjadi kesalahan saat menyimpan data.')->withInput();
     //     }
     // }
+
     public function store(Request $request)
     {
         $request->validate([
@@ -223,8 +234,9 @@ class SuratPengajuanController extends Controller
             $userId = Auth::user()->id_users;
 
             $resident = Resident::updateOrCreate(
-                ['users_id' => $userId],
+                ['nik' => $request->nik],
                 [
+                    'users' => $userId,
                     'nik' => $request->nik,
                     'nama_lengkap' => $request->nama_lengkap,
                     'tempat_lahir' => $request->tempat_lahir,
@@ -265,6 +277,9 @@ class SuratPengajuanController extends Controller
             return back()->with('error', 'Terjadi kesalahan saat menyimpan data.')->withInput();
         }
     }
+
+
+
 
 
     public function detail($id)
