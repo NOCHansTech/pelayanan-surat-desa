@@ -31,7 +31,6 @@
                             <div class="row">
                                 {{-- Kolom Kiri --}}
                                 <div class="col-md-6 mb-4">
-                                    <input type="button" value="{{Auth::user()->id_users}}">
                                     <div class="form-group has-icon-left">
                                         <label for="id_jenis_surat">Pilih Jenis Surat</label>
                                         <div class="position-relative">

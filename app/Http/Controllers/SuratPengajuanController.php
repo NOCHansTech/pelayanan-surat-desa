@@ -99,31 +99,32 @@ class SuratPengajuanController extends Controller
         ]);
     }
 
-
-
-
     public function create()
     {
-        $userId = Auth::user()->id_users;
-        $userRole = Auth::user()->role; // Misalnya role disimpan dalam tabel users
-
-        // Jika admin, bisa memilih semua resident
-        if ($userRole == 'admin') {
-            $residents = \App\Models\Resident::all();
-        } else {
-            // Jika bukan admin, hanya ambil resident terkait user
-            $residents = \App\Models\Resident::where('users_id', $userId)->get();
+        $user = Auth::user();
+        if (!$user) {
+            return redirect()->route('login')->with('error', 'Silakan login terlebih dahulu.');
         }
 
+        $userId = $user->id_users;
+        $userRole = $user->role;
+
+        // Ambil data residents berdasarkan role
+        $residents = $userRole === 'admin'
+            ? \App\Models\Resident::all()
+            : \App\Models\Resident::where('users_id', $userId)->get();
+
+        // Ambil semua jenis surat
         $jenisSurat = \App\Models\JenisSurat::all();
 
         return view('surat-pengajuan.create', compact('residents', 'jenisSurat'));
     }
 
-    public function getResidentData($id)
+
+    public function getResidentData($users_id)
     {
         // Mengambil data resident berdasarkan ID
-        $resident = Resident::findOrFail($id);
+        $resident = Resident::findOrFail($users_id);
 
         return response()->json($resident);
     }
@@ -230,13 +231,15 @@ class SuratPengajuanController extends Controller
         ]);
 
         DB::beginTransaction();
+
         try {
             $userId = Auth::user()->id_users;
 
+            // Simpan atau update data warga
             $resident = Resident::updateOrCreate(
-                ['nik' => $request->nik],
+                ['nik' => $request->nik, 'users_id' => $userId],
                 [
-                    'users' => $userId,
+                    'users_id' => $userId,
                     'nik' => $request->nik,
                     'nama_lengkap' => $request->nama_lengkap,
                     'tempat_lahir' => $request->tempat_lahir,
@@ -252,20 +255,15 @@ class SuratPengajuanController extends Controller
                 ]
             );
 
-            SuratPengajuan::create([
+            // Simpan surat pengajuan
+            $pengajuan = SuratPengajuan::create([
                 'id_residents' => $resident->id,
                 'id_jenis_surat' => $request->id_jenis_surat,
                 'tanggal_pengajuan' => $request->tanggal_pengajuan,
-                // 'catatan' => collect($request->catatan_multi)
-                //     ->filter()
-                //     ->map(function ($item, $i) {
-                //         return ($i + 1) . '. ' . trim($item);
-                //     })->implode("\n"),
                 'catatan' => collect($request->catatan_multi)
                     ->filter()
-                    ->map(function ($item) {
-                        return trim($item);
-                    })->implode("\n"),
+                    ->map(fn($item) => trim($item))
+                    ->implode("\n"),
                 'status' => 'diajukan',
             ]);
 
@@ -274,13 +272,9 @@ class SuratPengajuanController extends Controller
             return redirect()->route('surat-pengajuan')->with('success', 'Pengajuan surat berhasil disimpan.');
         } catch (\Exception $e) {
             DB::rollBack();
-            return back()->with('error', 'Terjadi kesalahan saat menyimpan data.')->withInput();
+            return back()->with('error', 'Terjadi kesalahan: ' . $e->getMessage())->withInput();
         }
     }
-
-
-
-
 
     public function detail($id)
     {
