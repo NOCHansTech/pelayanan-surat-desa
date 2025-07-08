@@ -80,7 +80,7 @@
                             </li>
                         @endif
 
-                        @if (Auth::check() && Auth::user()->role == 'admin')
+                        {{-- @if (Auth::check() && Auth::user()->role == 'admin')
                             <li class="sidebar-item {{ request()->routeIs('users.resident') ? 'active' : '' }}">
                                 <a href="{{ route('users.resident') }}" class='sidebar-link'>
                                     <i class="bi bi-people-fill"></i>
@@ -94,7 +94,7 @@
                                     <span>Warga</span>
                                 </a>
                             </li>
-                        @endif
+                        @endif --}}
 
                         <li class="sidebar-item {{ request()->routeIs('users.profile') ? 'active' : '' }}">
                             <a href="{{ route('users.profile') }}" class='sidebar-link'>
