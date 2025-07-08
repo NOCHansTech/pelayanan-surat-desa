@@ -108,17 +108,22 @@
             </div>
         </div>
         <div class="col-md-6 mb-4">
-            <div class="form-group has-icon-left">
-                <input type="password" name="password" class="form-control form-control-xl" placeholder="Password" />
-                <div class="form-control-icon"><i class="bi bi-shield-lock"></i></div>
-            </div>
+        <div class="form-group has-icon-left position-relative">
+          <input type="password" id="password" name="password" class="form-control form-control-xl" placeholder="Password" />
+          <div class="form-control-icon"><i class="bi bi-shield-lock"></i></div>
+          <button type="button" class="btn btn-sm btn-light border-0 position-absolute top-50 end-0 translate-middle-y me-3" onclick="togglePassword('password', this)">
+            <i class="bi bi-eye"></i>
+          </button>
+        </div>
         </div>
         <div class="col-md-6 mb-4">
-            <div class="form-group has-icon-left">
-                <input type="password" name="password_confirmation" class="form-control form-control-xl" placeholder="Konfirmasi Password" />
-                <div class="form-control-icon"><i class="bi bi-shield-lock-fill"></i></div>
-            </div>
-        </div>
+          <div class="form-group has-icon-left position-relative">
+            <input type="password" id="password_confirmation" name="password_confirmation" class="form-control form-control-xl" placeholder="Konfirmasi Password" />
+            <div class="form-control-icon"><i class="bi bi-shield-lock-fill"></i></div>
+            <button type="button" class="btn btn-sm btn-light border-0 position-absolute top-50 end-0 translate-middle-y me-3" onclick="togglePassword('password_confirmation', this)">
+              <i class="bi bi-eye"></i>
+            </button>
+          </div>
     </div>
 
     <h4>Data Diri</h4>
@@ -158,54 +163,66 @@
             </div>
         </div>
         <div class="col-md-12 mb-4">
-            <div class="input-group input-group-xl mb-3">
-                <span class="input-group-text">
-                    <i class="bi bi-house me-1"></i>
-                </span>
+          <div class="row g-2">
+            <div class="col-md-6">
+              <div class="input-group">
+                <span class="input-group-text"><i class="bi bi-house me-1"></i></span>
                 <input
-                    type="text"
-                    id="kampung"
-                    name="kampung"
-                    class="form-control"
-                    placeholder="Nama Kampung"
-                    aria-label="Nama Kampung"
-                    oninput="enforcePrefix(this, 'Kp. ')"
-                    value="{{ old('kampung') ? old('kampung') : 'Kp. ' }}"
+                  type="text"
+                  id="kampung"
+                  name="kampung"
+                  class="form-control"
+                  placeholder="Nama Kampung"
+                  oninput="enforcePrefix(this, 'Kp. ')"
+                  value="{{ old('kampung') ? old('kampung') : 'Kp. ' }}"
                 />
+              </div>
+            </div>
+
+            <div class="col-6 col-md-3">
+              <div class="input-group">
                 <span class="input-group-text">RT</span>
                 <input
-                    type="text"
-                    id="rt"
-                    name="rt"
-                    class="form-control"
-                    placeholder="001"
-                    maxlength="3"
-                    style="max-width: 80px"
-                    aria-label="RT"
-                    value="{{ old('rt') }}"
+                  type="text"
+                  id="rt"
+                  name="rt"
+                  class="form-control"
+                  placeholder="001"
+                  maxlength="3"
+                  value="{{ old('rt') }}"
                 />
+              </div>
+            </div>
+
+            <div class="col-6 col-md-3">
+              <div class="input-group">
                 <span class="input-group-text">RW</span>
                 <input
-                    type="text"
-                    id="rw"
-                    name="rw"
-                    class="form-control"
-                    placeholder="001"
-                    maxlength="3"
-                    style="max-width: 80px"
-                    aria-label="RW"
-                    value="{{ old('rw') }}"
+                  type="text"
+                  id="rw"
+                  name="rw"
+                  class="form-control"
+                  placeholder="001"
+                  maxlength="3"
+                  value="{{ old('rw') }}"
                 />
-                <input
-                    type="text"
-                    id="desa_kec_prov"
-                    name="desa_kec_prov"
-                    class="form-control"
-                    value="Desa. Karangmekar, Kec. Cimanggu, Kab. Sukabumi, Prov. Jawa Barat"
-                    style="min-width: 300px"
-                    aria-label="desa_kec_prov"
-                />
+              </div>
             </div>
+
+            <div class="col-12 mt-2">
+              <div class="input-group">
+                <span class="input-group-text"><i class="bi bi-geo-fill"></i></span>
+                <input
+                  type="text"
+                  id="desa_kec_prov"
+                  name="desa_kec_prov"
+                  class="form-control"
+                  value="Desa. Karangmekar, Kec. Cimanggu, Kab. Sukabumi, Prov. Jawa Barat"
+                  aria-label="desa_kec_prov"
+                />
+              </div>
+            </div>
+          </div>
         </div>
         <div class="col-md-6 mb-4">
             <div class="form-group has-icon-left">
@@ -288,43 +305,70 @@
       });
     });
   </script>
-    <script>
-        function capitalizeAfterSpace(text) {
-            return text
-                .split(' ')
-                .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-                .join(' ');
-        }
-
-        function enforcePrefix(input, prefix) {
-            // Pastikan input dimulai dengan prefix
-            if (!input.value.startsWith(prefix)) {
-                input.value = prefix + input.value.slice(prefix.length);
-            }
-            // Ambil bagian setelah prefix dan kapitalisasi setiap kata
-            if (input.value.length > prefix.length) {
-                const afterPrefix = input.value.slice(prefix.length);
-                input.value = prefix + capitalizeAfterSpace(afterPrefix);
-            }
-        }
-
-        window.addEventListener('DOMContentLoaded', () => {
-            const kampungInput = document.getElementById('kampung');
-            const prefix = 'Kp. ';
-            // Set prefix saat halaman dimuat
-            if (!kampungInput.value.startsWith(prefix)) {
-                kampungInput.value = prefix;
-            }
-            // Kapitalisasi setiap kata setelah prefix saat halaman dimuat
-            if (kampungInput.value.length > prefix.length) {
-                const afterPrefix = kampungInput.value.slice(prefix.length);
-                kampungInput.value = prefix + capitalizeAfterSpace(afterPrefix);
-            }
-            // Tambahkan event listener untuk memantau perubahan input
-            kampungInput.addEventListener('input', () => {
-                enforcePrefix(kampungInput, prefix);
+<script>
+    function capitalizeAfterSpace(text) {
+        return text
+            .split(' ')
+            .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+            .join(' ');
+    }
+    window.addEventListener('DOMContentLoaded', () => {
+                const kampungInput = document.getElementById('kampung');
+                const prefix = 'Kp. ';
+                // Set prefix saat halaman dimuat
+                if (!kampungInput.value.startsWith(prefix)) {
+                    kampungInput.value = prefix;
+                }
+                // Kapitalisasi setiap kata setelah prefix saat halaman dimuat
+                if (kampungInput.value.length > prefix.length) {
+                    const afterPrefix = kampungInput.value.slice(prefix.length);
+                    kampungInput.value = prefix + capitalizeAfterSpace(afterPrefix);
+                }
+                // Tambahkan event listener untuk memantau perubahan input
+                kampungInput.addEventListener('input', () => {
+                    enforcePrefix(kampungInput, prefix);
+                });
             });
+    function enforceCapitalization() {
+        const skipNames = ['nik', 'rt', 'rw', 'kampung', 'desa_kec_prov', 'username'];
+        const inputs = document.querySelectorAll('input[type="text"]:not([readonly])');
+
+        inputs.forEach(input => {
+            if (skipNames.includes(input.name)) return;
+
+            input.addEventListener('input', () => {
+                const cursorPos = input.selectionStart;
+                input.value = capitalizeAfterSpace(input.value);
+                input.setSelectionRange(cursorPos, cursorPos);
+            });
+
+            // Langsung kapitalisasi jika ada nilai saat halaman dimuat
+            if (input.value) {
+                input.value = capitalizeAfterSpace(input.value);
+            }
         });
-    </script>
+    }
+
+    document.addEventListener('DOMContentLoaded', enforceCapitalization);
+</script>
+
+<script>
+  function togglePassword(id, el) {
+    const input = document.getElementById(id);
+    const icon = el.querySelector('i');
+
+    if (input.type === 'password') {
+      input.type = 'text';
+      icon.classList.remove('bi-eye');
+      icon.classList.add('bi-eye-slash');
+    } else {
+      input.type = 'password';
+      icon.classList.remove('bi-eye-slash');
+      icon.classList.add('bi-eye');
+    }
+  }
+</script>
+
+
 </body>
 </html>

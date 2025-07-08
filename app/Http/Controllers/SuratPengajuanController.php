@@ -116,7 +116,7 @@ class SuratPengajuanController extends Controller
     {
         $request->validate([
             'id_jenis_surat' => 'required|exists:jenis_surat,id',
-            'nik' => 'required|digits:16',
+            'nik' => ['required', 'digits:16', 'regex:/^[0-9]+$/'],
             'nama_lengkap' => 'required|string|max:100',
             'tempat_lahir' => 'nullable|string|max:50',
             'tanggal_lahir' => 'nullable|date',
@@ -135,6 +135,7 @@ class SuratPengajuanController extends Controller
             'id_jenis_surat.required' => 'Jenis surat wajib dipilih.',
             'nik.required' => 'NIK tidak boleh kosong.',
             'nik.digits' => 'NIK harus terdiri dari 16 digit angka.',
+            'nik.regex' => 'NIK hanya boleh berisi angka.',
             'nama_lengkap.required' => 'Nama lengkap wajib diisi.',
             'jenis_kelamin.required' => 'Jenis kelamin wajib dipilih.',
             'tanggal_pengajuan.required' => 'Tanggal pengajuan wajib diisi.',
