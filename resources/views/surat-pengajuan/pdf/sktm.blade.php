@@ -166,7 +166,7 @@
 
             <table class="data-table">
                 <tr><td>Nama</td><td>:</td><td><strong>{{ $surat->resident->nama_lengkap }}</strong></td></tr>
-                <tr><td>Tempat/Tgl Lahir</td><td>:</td><td>{{ $surat->resident->tempat_lahir }}, {{ \Carbon\Carbon::parse($surat->resident->tanggal_lahir)->translatedFormat('d F Y') }}</td></tr>
+                <tr><td>Tempat/Tgl Lahir</td><td>:</td><td>{{ $surat->resident->tempat_lahir }}, {{ \Carbon\Carbon::parse($surat->resident->tanggal_lahir)->locale('id')->translatedFormat('d F Y') }}</td></tr>
                 <tr><td>Jenis Kelamin</td><td>:</td><td>{{ $surat->resident->jenis_kelamin == 'L' ? 'Laki-laki' : 'Perempuan' }}</td></tr>
                 <tr><td>Alamat</td><td>:</td><td>{{ $surat->resident->alamat }}</td></tr>
                 <tr><td>Nama Orang Tua</td><td>:</td><td>{{ $surat->resident->nama_ayah }}</td></tr>
@@ -204,7 +204,7 @@
                 <tr>
                     <td style="width: 50%;"></td>
                     <td>
-                        Karangmekar, {{ \Carbon\Carbon::parse($surat->tanggal_pengajuan)->translatedFormat('d F Y') }}<br>
+                        Karangmekar, {{ \Carbon\Carbon::parse($surat->tanggal_pengajuan)->locale('id')->translatedFormat('d F Y') }}<br>
                         Kepala Desa Karangmekar<br><br><br><br>
                         <strong><u>SARIP HIDAYAT</u></strong>
                     </td>

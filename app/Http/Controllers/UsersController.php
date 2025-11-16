@@ -13,14 +13,20 @@ class UsersController extends Controller
     public function index(Request $request)
     {
         $search = $request->input('search');
+        $role = $request->input('role');
 
         $data = User::when($search, function ($query, $search) {
             return $query->where('username', 'like', "%{$search}%");
         })
-            ->orderBy('username', 'desc')
+            ->when($role, function ($query, $role) {
+                return $query->where('role', $role);
+            })
+            ->orderBy('username', 'asc')
             ->paginate(10);
-        return view('users.index', compact('data', 'search'));
+
+        return view('users.index', compact('data', 'search', 'role'));
     }
+
     public function store(Request $request)
     {
         $request->validate([
