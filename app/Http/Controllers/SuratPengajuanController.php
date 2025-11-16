@@ -282,30 +282,37 @@ class SuratPengajuanController extends Controller
             abort(403, 'Anda tidak memiliki akses untuk mengubah status surat.');
         }
 
+        // Validasi input status
         $request->validate([
             'status' => 'required|in:diajukan,diproses,ditolak,selesai',
         ]);
 
+        // Ambil surat berdasarkan ID
         $surat = SuratPengajuan::findOrFail($id);
         $surat->status = $request->status;
 
+        // Jika status diubah menjadi "selesai"
         if ($request->status === 'selesai') {
+            // Set tanggal disetujui sekarang
             $surat->tanggal_disetujui = now();
 
-            // Hitung nomor surat baru
+            // Hitung jumlah surat selesai di tahun ini
             $jumlah = SuratPengajuan::whereYear('tanggal_disetujui', now()->year)
                 ->whereNotNull('tanggal_disetujui')
                 ->count();
 
-
+            // Nomor surat baru, urut, 3 digit
             $nomorSurat = str_pad($jumlah + 1, 3, '0', STR_PAD_LEFT);
             $surat->nomor_surat = $nomorSurat;
         }
 
+        // Simpan perubahan
         $surat->save();
 
+        // Redirect kembali dengan pesan sukses
         return back()->with('success', 'Status berhasil diperbarui menjadi: ' . ucfirst($request->status));
     }
+
 
     public function destroy($id)
     {
