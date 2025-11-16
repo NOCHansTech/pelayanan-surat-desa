@@ -385,7 +385,8 @@
                                     <option value="">Pilih Status</option>
                                     <option value="Belum Menikah">Belum Menikah</option>
                                     <option value="Menikah">Menikah</option>
-                                    <option value="Cerai">Cerai</option>
+                                    <option value="Cerai Hidup">Cerai Hidup</option>
+                                    <option value="Cerai Mati">Cerai Mati</option>
                                 </select>
                             </div>
                             <div>
@@ -499,7 +500,7 @@
                                 <option value="Belum Menikah" {{ old('status_perkawinan') == 'Belum Menikah' ? 'selected' : '' }}>
                                     Belum Menikah
                                 </option>
-                                <option value="Kawin" {{ old('status_perkawinan') == 'Kawin' ? 'selected' : '' }}>
+                                <option value="Menikah" {{ old('status_perkawinan') == 'Menikah' ? 'selected' : '' }}>
                                     Menikah
                                 </option>
                                 <option value="Cerai Hidup" {{ old('status_perkawinan') == 'Cerai Hidup' ? 'selected' : '' }}>
