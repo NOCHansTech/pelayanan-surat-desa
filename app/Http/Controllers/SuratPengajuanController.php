@@ -293,9 +293,10 @@ class SuratPengajuanController extends Controller
             $surat->tanggal_disetujui = now();
 
             // Hitung nomor surat baru
-            $jumlah = SuratPengajuan::whereYear('created_at', now()->year)
-                ->where('status', 'selesai')
+            $jumlah = SuratPengajuan::whereYear('tanggal_disetujui', now()->year)
+                ->whereNotNull('tanggal_disetujui')
                 ->count();
+
 
             $nomorSurat = str_pad($jumlah + 1, 3, '0', STR_PAD_LEFT);
             $surat->nomor_surat = $nomorSurat;
